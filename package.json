@@ -1,0 +1,40 @@
+{
+  "name": "baiao-aula-quinta-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API educacional com Express, TypeORM e MySQL.",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "start:watch": "tsx watch src/server.ts",
+    "migration:run": "npm run build && typeorm migration:run -d dist/data-source.js",
+    "migration:revert": "npm run build && typeorm migration:revert -d dist/data-source.js",
+    "seed": "npm run build && node dist/run-seeds.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.3",
+    "reflect-metadata": "^0.2.2",
+    "slugify": "^1.6.6",
+    "typeorm": "^0.3.27",
+    "yup": "^1.7.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.15.2",
+    "@types/supertest": "^6.0.3",
+    "supertest": "^7.1.4",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}
