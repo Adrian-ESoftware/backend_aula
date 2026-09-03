@@ -10,7 +10,7 @@ const required = (name: string, fallback?: string): string => {
 
 export const config = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
-  port: Number(process.env.PORT ?? 3000),
+  port: Number(process.env.PORT ?? 8080),
   database: {
     host: required('DB_HOST', 'localhost'),
     port: Number(process.env.DB_PORT ?? 3306),

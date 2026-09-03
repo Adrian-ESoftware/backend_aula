@@ -52,7 +52,7 @@ As migrations também podem ser revertidas com `npm run migration:revert`.
 
 Veja `.env.example` para a lista completa. As principais são:
 
-- `PORT`: porta HTTP, padrão `3000`.
+- `PORT`: porta HTTP, padrão `8080`.
 - `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`: conexão MySQL.
 - `JWT_SECRET`: segredo usado para assinar os tokens.
 - `JWT_EXPIRES_IN`: duração do JWT, padrão `1d`.
@@ -95,6 +95,8 @@ Authorization: Bearer <token>
 - `POST`, `PATCH` e `DELETE /products/:id` — autenticados
 
 Produtos possuem nome, slug, descrição, preço e situação relacionada. O slug é gerado automaticamente a partir do nome.
+
+Usuários possuem uma situação relacionada por `situation_id`. As entidades TypeORM ficam em `src/entity/` e as migrations em `src/migration/`.
 
 ## Dados de teste
 

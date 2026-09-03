@@ -1,15 +1,15 @@
 import 'reflect-metadata';
 import bcrypt from 'bcryptjs';
 import { AppDataSource } from './data-source';
-import { Product } from './entities/Product';
-import { Situation } from './entities/Situation';
-import { User } from './entities/User';
+import { Product } from './entity/Product';
+import { Situations } from './entity/Situations';
+import { Users } from './entity/Users';
 
 const run = async (): Promise<void> => {
   await AppDataSource.initialize();
 
-  const userRepository = AppDataSource.getRepository(User);
-  const situationRepository = AppDataSource.getRepository(Situation);
+  const userRepository = AppDataSource.getRepository(Users);
+  const situationRepository = AppDataSource.getRepository(Situations);
   const productRepository = AppDataSource.getRepository(Product);
 
   let user = await userRepository.findOneBy({ email: 'admin@example.com' });
@@ -26,14 +26,19 @@ const run = async (): Promise<void> => {
   }
 
   const situationData = [
-    { name: 'Disponível', description: 'Produto disponível para venda.', isActive: true },
-    { name: 'Indisponível', description: 'Produto temporariamente indisponível.', isActive: false },
+    { nameSituation: 'Disponível', description: 'Produto disponível para venda.', isActive: true },
+    { nameSituation: 'Indisponível', description: 'Produto temporariamente indisponível.', isActive: false },
   ];
-  const savedSituations: Situation[] = [];
+  const savedSituations: Situations[] = [];
   for (const data of situationData) {
-    let situation = await situationRepository.findOneBy({ name: data.name });
+    let situation = await situationRepository.findOneBy({ nameSituation: data.nameSituation });
     if (!situation) situation = await situationRepository.save(situationRepository.create(data));
     savedSituations.push(situation);
+  }
+
+  if (!user.situationId) {
+    user.situationId = savedSituations[0].id;
+    await userRepository.save(user);
   }
 
   if (!(await productRepository.count())) {

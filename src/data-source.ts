@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { config } from './config';
-import { Product } from './entities/Product';
-import { Situation } from './entities/Situation';
-import { User } from './entities/User';
+import { Product } from './entity/Product';
+import { Situations } from './entity/Situations';
+import { Users } from './entity/Users';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -12,8 +12,8 @@ export const AppDataSource = new DataSource({
   username: config.database.username,
   password: config.database.password,
   database: config.database.database,
-  entities: [User, Situation, Product],
-  migrations: [__dirname + '/migrations/*.{js,ts}'],
+  entities: [Users, Situations, Product],
+  migrations: [__dirname + '/migration/*.{js,ts}'],
   synchronize: false,
   logging: config.nodeEnv === 'development' ? ['error'] : false,
 });

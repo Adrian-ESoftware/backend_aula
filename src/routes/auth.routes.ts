@@ -7,11 +7,11 @@ import { config } from '../config';
 import { AppError } from '../errors';
 import { requireAuth } from '../middleware/auth';
 import { asyncHandler, createRecoveryToken, hashRecoveryToken, validateBody } from '../utils';
-import { User } from '../entities/User';
+import { Users } from '../entity/Users';
 
 const router = Router();
-const users = (): ReturnType<typeof AppDataSource.getRepository<User>> =>
-  AppDataSource.getRepository(User);
+const users = (): ReturnType<typeof AppDataSource.getRepository<Users>> =>
+  AppDataSource.getRepository(Users);
 
 const registerSchema = yup.object({
   name: yup.string().trim().min(2).max(120).required(),
@@ -33,7 +33,7 @@ const resetSchema = yup.object({
   newPassword: yup.string().min(8).max(100).required(),
 });
 
-const publicUser = (user: User) => ({
+const publicUser = (user: Users) => ({
   id: user.id,
   name: user.name,
   email: user.email,
@@ -41,7 +41,7 @@ const publicUser = (user: User) => ({
   updatedAt: user.updatedAt,
 });
 
-const signToken = (user: User): string =>
+const signToken = (user: Users): string =>
   jwt.sign({ userId: user.id }, config.jwtSecret, {
     expiresIn: config.jwtExpiresIn as SignOptions['expiresIn'],
   });

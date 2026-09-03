@@ -7,11 +7,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Situation } from './Situation';
+import { Situations } from './Situations';
 
 @Entity('products')
 export class Product {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
   @Column({ type: 'varchar', length: 150 })
@@ -29,9 +29,9 @@ export class Product {
   @Column({ name: 'situation_id', type: 'int' })
   situationId!: number;
 
-  @ManyToOne(() => Situation, (situation) => situation.products, { onDelete: 'RESTRICT' })
+  @ManyToOne(() => Situations, (situation) => situation.products, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'situation_id' })
-  situation!: Situation;
+  situation!: Situations;
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   createdAt!: Date;

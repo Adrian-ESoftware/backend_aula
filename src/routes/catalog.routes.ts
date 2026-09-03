@@ -2,18 +2,18 @@ import { Router } from 'express';
 import * as yup from 'yup';
 import slugify from 'slugify';
 import { AppDataSource } from '../data-source';
-import { Product } from '../entities/Product';
-import { Situation } from '../entities/Situation';
+import { Product } from '../entity/Product';
+import { Situations } from '../entity/Situations';
 import { AppError } from '../errors';
 import { requireAuth } from '../middleware/auth';
 import { asyncHandler, parseId, validateBody } from '../utils';
 
 const router = Router();
 const products = () => AppDataSource.getRepository(Product);
-const situations = () => AppDataSource.getRepository(Situation);
+const situations = () => AppDataSource.getRepository(Situations);
 
 const situationSchema = yup.object({
-  name: yup.string().trim().min(2).max(80).required(),
+  nameSituation: yup.string().trim().min(2).max(80).required(),
   description: yup.string().trim().max(1000).nullable().default(null),
   isActive: yup.boolean().default(true),
 });
@@ -40,7 +40,7 @@ const uniqueSlug = async (name: string, id?: number): Promise<string> => {
   }
 };
 
-const findSituation = async (id: number): Promise<Situation> => {
+const findSituation = async (id: number): Promise<Situations> => {
   const situation = await situations().findOneBy({ id });
   if (!situation) throw new AppError('Situação não encontrada.', 404);
   return situation;
@@ -68,7 +68,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const input = await validateBody(situationSchema, req.body);
     const repository = situations();
-    if (await repository.findOne({ where: { name: input.name } })) {
+    if (await repository.findOne({ where: { nameSituation: input.nameSituation } })) {
       throw new AppError('Já existe uma situação com este nome.', 409);
     }
     const situation = await repository.save(repository.create(input));
@@ -82,8 +82,8 @@ router.patch(
   asyncHandler(async (req, res) => {
     const situation = await findSituation(parseId(req.params.id));
     const input = await validateBody(situationUpdateSchema, req.body);
-    if (input.name && input.name !== situation.name) {
-      const duplicate = await situations().findOne({ where: { name: input.name } });
+    if (input.nameSituation && input.nameSituation !== situation.nameSituation) {
+      const duplicate = await situations().findOne({ where: { nameSituation: input.nameSituation } });
       if (duplicate && duplicate.id !== situation.id) throw new AppError('Já existe uma situação com este nome.', 409);
     }
     Object.assign(situation, input);
