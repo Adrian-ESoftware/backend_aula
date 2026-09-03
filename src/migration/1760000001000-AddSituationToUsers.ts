@@ -29,7 +29,7 @@ export class AddSituationToUsers1760000001000 implements MigrationInterface {
     const refreshedUsers = await queryRunner.getTable('users');
     if (refreshedUsers && !refreshedUsers.foreignKeys.some((key) => key.columnNames.includes('situation_id'))) {
       await queryRunner.createForeignKey('users', new TableForeignKey({
-        columnNames: ['situation_id'], referencedTableName: 'situations', referencedColumnNames: ['id'], onDelete: 'SET NULL',
+        columnNames: ['situation_id'], referencedTableName: 'situations', referencedColumnNames: ['id'], onDelete: 'CASCADE',
       }));
     }
   }

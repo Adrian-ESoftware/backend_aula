@@ -48,6 +48,12 @@ npm test             # testes automatizados
 
 As migrations também podem ser revertidas com `npm run migration:revert`.
 
+As migrations de criação ficam em `src/migration/`, nas classes `CreateSituationsTable` e `CreateUsersTable`. Para gerar uma nova migration:
+
+```bash
+npx typeorm migration:create src/migration/NomeDaMigration
+```
+
 ## Variáveis de ambiente
 
 Veja `.env.example` para a lista completa. As principais são:

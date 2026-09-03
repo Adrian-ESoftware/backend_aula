@@ -32,7 +32,7 @@ export class Users {
   @Column({ name: 'situation_id', type: 'int', nullable: true })
   situationId!: number | null;
 
-  @ManyToOne(() => Situations, (situation) => situation.users, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => Situations, (situation) => situation.users, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'situation_id' })
   situation!: Situations | null;
 
