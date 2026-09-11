@@ -47,3 +47,6 @@ export class Users {
   })
   updatedAt!: Date;
 }
+
+export { Users as User };
+

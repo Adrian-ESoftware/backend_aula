@@ -10,7 +10,7 @@ export class CreateSituationsTable1760000002000 implements MigrationInterface {
       name: 'situations',
       columns: [
         { name: 'id', type: 'int', isPrimary: true, isGenerated: true, generationStrategy: 'increment' },
-        { name: 'nameSituation', type: 'varchar', length: '80' },
+        { name: 'nameSituation', type: 'varchar', length: '80', isUnique: true },
         { name: 'createdAt', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
         { name: 'updatedAt', type: 'timestamp', default: 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' },
       ],

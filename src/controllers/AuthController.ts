@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import * as yup from 'yup';
@@ -48,7 +48,7 @@ const signToken = (user: Users): string =>
 
 router.post(
   '/register',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const input = await validateBody(registerSchema, req.body);
     const email = input.email.toLowerCase();
     const repository = users();
@@ -70,7 +70,7 @@ router.post(
 
 router.post(
   '/login',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const input = await validateBody(loginSchema, req.body);
     const user = await users().findOne({ where: { email: input.email.toLowerCase() } });
     if (!user || !(await bcrypt.compare(input.password, user.password))) {
@@ -83,7 +83,7 @@ router.post(
 router.get(
   '/me',
   requireAuth,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const user = await users().findOneBy({ id: req.userId });
     if (!user) throw new AppError('Usuário não encontrado.', 404);
     res.json({ user: publicUser(user) });
@@ -92,7 +92,7 @@ router.get(
 
 router.post(
   '/forgot-password',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const input = await validateBody(forgotSchema, req.body);
     const user = await users().findOne({ where: { email: input.email.toLowerCase() } });
     const response: { message: string; resetToken?: string; resetUrl?: string } = {
@@ -121,7 +121,7 @@ router.post(
 
 router.post(
   '/reset-password',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const input = await validateBody(resetSchema, req.body);
     const user = await users().findOne({
       where: { recoveryTokenHash: hashRecoveryToken(input.token) },
@@ -138,5 +138,5 @@ router.post(
   }),
 );
 
-export { AuthController } from '../controllers/AuthController';
+export const AuthController = router;
 export default router;

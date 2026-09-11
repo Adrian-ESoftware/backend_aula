@@ -40,3 +40,5 @@ export class Situations {
   @OneToMany(() => Product, (product) => product.situation)
   products!: Product[];
 }
+
+export { Situations as Situation };

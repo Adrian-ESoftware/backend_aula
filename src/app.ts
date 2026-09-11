@@ -2,7 +2,8 @@ import 'reflect-metadata';
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import { AppError } from './errors';
-import authRoutes from './routes/auth.routes';
+import { AuthController } from './controllers/AuthController';
+import { SituationsController } from './controllers/SituationsController';
 import catalogRoutes from './routes/catalog.routes';
 
 export const app = express();
@@ -14,7 +15,8 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.use('/auth', authRoutes);
+app.use('/auth', AuthController);
+app.use(SituationsController);
 app.use(catalogRoutes);
 
 app.use((_req, _res, next) => next(new AppError('Rota não encontrada.', 404)));
