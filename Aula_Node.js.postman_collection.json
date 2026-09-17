@@ -1,0 +1,65 @@
+{
+  "info": {
+    "_postman_id": "b789a29e-d309-40ea-9bf8-ba49cfcb76ef",
+    "name": "Aula Node.js",
+    "description": "Collection para a aula de Node.js com Express e TypeORM.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "host",
+      "value": "http://localhost:8080",
+      "type": "string",
+      "description": "URL base da API (use 8080 ou 3000 de acordo com seu ambiente)"
+    }
+  ],
+  "item": [
+    {
+      "name": "Situations",
+      "item": [
+        {
+          "name": "GET Situations (Checagem Inicial)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/situations",
+              "host": ["{{host}}"],
+              "path": ["situations"]
+            },
+            "description": "Rota GET simples para verificar o funcionamento inicial de /situations"
+          },
+          "response": []
+        },
+        {
+          "name": "POST Cadastrar Situação",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameSituation\": \"Ativo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/situations",
+              "host": ["{{host}}"],
+              "path": ["situations"]
+            },
+            "description": "Cadastrar situação com restrição de unicidade em nameSituation"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

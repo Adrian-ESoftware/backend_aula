@@ -3,7 +3,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import { AppError } from './errors';
 import { AuthController } from './controllers/AuthController';
-import { SituationsController } from './controllers/SituationsController';
+import { SituationController } from './controllers/SituationController';
 import catalogRoutes from './routes/catalog.routes';
 
 export const app = express();
@@ -16,7 +16,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.use('/auth', AuthController);
-app.use(SituationsController);
+app.use('/situations', SituationController);
 app.use(catalogRoutes);
 
 app.use((_req, _res, next) => next(new AppError('Rota não encontrada.', 404)));

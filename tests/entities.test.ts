@@ -28,4 +28,11 @@ describe('entidades TypeORM', () => {
     );
     expect(email?.options.unique).toBe(true);
   });
+
+  it('mantém o nameSituation único na entidade Situation', () => {
+    const nameSituation = getMetadataArgsStorage().columns.find(
+      (column) => column.target === Situations && column.propertyName === 'nameSituation',
+    );
+    expect(nameSituation?.options.unique).toBe(true);
+  });
 });

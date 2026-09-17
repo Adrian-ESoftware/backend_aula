@@ -4,7 +4,22 @@ export class CreateSituationsTable1760000002000 implements MigrationInterface {
   name = 'CreateSituationsTable1760000002000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    if (await queryRunner.hasTable('situations')) return;
+    if (await queryRunner.hasTable('situations')) {
+      const table = await queryRunner.getTable('situations');
+      const hasUnique =
+        table?.indices.some((idx) => idx.columnNames.includes('nameSituation')) ||
+        table?.uniques.some((u) => u.columnNames.includes('nameSituation'));
+      if (!hasUnique) {
+        try {
+          await queryRunner.query(
+            'ALTER TABLE `situations` ADD UNIQUE `UQ_situations_nameSituation` (`nameSituation`)',
+          );
+        } catch {
+          // Já único ou restrição existente
+        }
+      }
+      return;
+    }
 
     await queryRunner.createTable(new Table({
       name: 'situations',
