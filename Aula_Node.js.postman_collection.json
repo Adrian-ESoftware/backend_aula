@@ -18,7 +18,7 @@
       "name": "Situations",
       "item": [
         {
-          "name": "GET Situations (Checagem Inicial)",
+          "name": "list",
           "request": {
             "method": "GET",
             "header": [],
@@ -27,7 +27,28 @@
               "host": ["{{host}}"],
               "path": ["situations"]
             },
-            "description": "Rota GET simples para verificar o funcionamento inicial de /situations"
+            "description": "Rota GET para listagem geral de todas as situações cadastradas"
+          },
+          "response": []
+        },
+        {
+          "name": "view",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/situations/:id",
+              "host": ["{{host}}"],
+              "path": ["situations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID da situação a ser visualizada"
+                }
+              ]
+            },
+            "description": "Rota GET com parâmetro para visualização de um item específico por ID"
           },
           "response": []
         },
