@@ -79,6 +79,41 @@
             "description": "Cadastrar situação com restrição de unicidade em nameSituation"
           },
           "response": []
+        },
+        {
+          "name": "Edit",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameSituation\": \"Ativo Editado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/situations/:id",
+              "host": ["{{host}}"],
+              "path": ["situations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID da situação a ser atualizada"
+                }
+              ]
+            },
+            "description": "Rota PUT para atualizar uma situação existente por ID"
+          },
+          "response": []
         }
       ]
     }

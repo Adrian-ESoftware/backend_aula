@@ -9,13 +9,19 @@ describe('SituationController - Testes Completos', () => {
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
     }
-    // Limpar o registro 'Ativo' antes do teste, caso já exista
+    // Limpar os registros antes do teste, caso já existam
     const situationRepo = AppDataSource.getRepository(Situation);
     await situationRepo.delete({ nameSituation: 'Ativo' });
+    await situationRepo.delete({ nameSituation: 'Inativo' });
+    await situationRepo.delete({ nameSituation: 'Pendente' });
   });
 
   afterAll(async () => {
     if (AppDataSource.isInitialized) {
+      const situationRepo = AppDataSource.getRepository(Situation);
+      await situationRepo.delete({ nameSituation: 'Ativo' });
+      await situationRepo.delete({ nameSituation: 'Inativo' });
+      await situationRepo.delete({ nameSituation: 'Pendente' });
       await AppDataSource.destroy();
     }
   });
@@ -80,5 +86,69 @@ describe('SituationController - Testes Completos', () => {
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty('message');
     expect(response.body.message).toMatch(/Situação não encontrada/i);
+  });
+
+  it('7. PUT /situations/:id (edit) com ID válido deve atualizar a situação com sucesso (status 200)', async () => {
+    const situationRepo = AppDataSource.getRepository(Situation);
+    const situation = await situationRepo.findOneBy({ nameSituation: 'Ativo' });
+    expect(situation).toBeDefined();
+
+    const response = await request(app)
+      .put(`/situations/${situation!.id}`)
+      .send({ nameSituation: 'Inativo' });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toBe('Situação atualizada com sucesso');
+    expect(response.body).toHaveProperty('situation');
+    expect(response.body.situation.id).toBe(situation!.id);
+    expect(response.body.situation.nameSituation).toBe('Inativo');
+
+    // Verificar persistência no banco de dados
+    const updatedInDb = await situationRepo.findOneBy({ id: situation!.id });
+    expect(updatedInDb).toBeDefined();
+    expect(updatedInDb?.nameSituation).toBe('Inativo');
+  });
+
+  it('8. PUT /situations/:id (edit) com ID inexistente deve retornar status 404 e mensagem de erro', async () => {
+    const response = await request(app)
+      .put('/situations/999999')
+      .send({ nameSituation: 'Qualquer' });
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toMatch(/Situação não encontrada/i);
+  });
+
+  it('9. PUT /situations/:id (edit) com nome duplicado deve ser bloqueado por restrição unique (status 500)', async () => {
+    // Cadastrar uma nova situação "Pendente"
+    const createRes = await request(app)
+      .post('/situations')
+      .send({ nameSituation: 'Pendente' });
+    expect(createRes.status).toBe(201);
+    const pendenteId = createRes.body.situation.id;
+
+    // Tentar atualizar "Pendente" para "Inativo" (já existente)
+    const response = await request(app)
+      .put(`/situations/${pendenteId}`)
+      .send({ nameSituation: 'Inativo' });
+
+    expect(response.status).toBe(500);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toMatch(/Duplicate entry|ER_DUP_ENTRY/i);
+  });
+
+  it('10. PATCH /situations/:id (edit) também deve atualizar com sucesso (status 200)', async () => {
+    const situationRepo = AppDataSource.getRepository(Situation);
+    const situation = await situationRepo.findOneBy({ nameSituation: 'Inativo' });
+    expect(situation).toBeDefined();
+
+    const response = await request(app)
+      .patch(`/situations/${situation!.id}`)
+      .send({ nameSituation: 'Ativo' });
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('Situação atualizada com sucesso');
+    expect(response.body.situation.nameSituation).toBe('Ativo');
   });
 });

@@ -14,7 +14,7 @@ const listSituations = async (_req: Request, res: Response): Promise<void> => {
     return;
   } catch (error: any) {
     res.status(500).json({
-      message: error?.message || 'Erro ao listar situação.',
+      message: error?.message || 'Erro ao listar situação',
     });
     return;
   }
@@ -52,7 +52,7 @@ const viewSituation = async (req: Request, res: Response): Promise<void> => {
     return;
   } catch (error: any) {
     res.status(500).json({
-      message: error?.message || 'Erro ao visualizar situação.',
+      message: error?.message || 'Erro ao visualizar situação',
     });
     return;
   }
@@ -75,7 +75,7 @@ const createSituation = async (req: Request, res: Response): Promise<void> => {
     return;
   } catch (error: any) {
     res.status(500).json({
-      message: error?.message || 'Erro ao cadastrar situação.',
+      message: error?.message || 'Erro ao cadastrar situação',
     });
     return;
   }
@@ -83,6 +83,53 @@ const createSituation = async (req: Request, res: Response): Promise<void> => {
 
 router.post('/', createSituation);
 router.post('/situations', createSituation);
+
+// 4. Rota PUT/PATCH (Edit)
+const editSituation = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const parsedId = parseInt(id, 10);
+
+    if (isNaN(parsedId)) {
+      res.status(404).json({
+        message: 'Situação não encontrada.',
+      });
+      return;
+    }
+
+    const situationRepository = AppDataSource.getRepository(Situation);
+    const situation = await situationRepository.findOneBy({
+      id: parsedId,
+    });
+
+    if (!situation) {
+      res.status(404).json({
+        message: 'Situação não encontrada.',
+      });
+      return;
+    }
+
+    situationRepository.merge(situation, req.body);
+    situation.id = parsedId;
+    const updatedSituation = await situationRepository.save(situation);
+
+    res.status(200).json({
+      message: 'Situação atualizada com sucesso',
+      situation: updatedSituation,
+    });
+    return;
+  } catch (error: any) {
+    res.status(500).json({
+      message: error?.message || 'Erro ao atualizar situação',
+    });
+    return;
+  }
+};
+
+router.put('/:id', editSituation);
+router.put('/situations/:id', editSituation);
+router.patch('/:id', editSituation);
+router.patch('/situations/:id', editSituation);
 
 export const SituationController = router;
 export default router;
