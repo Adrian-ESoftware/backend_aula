@@ -151,4 +151,36 @@ describe('SituationController - Testes Completos', () => {
     expect(response.body.message).toBe('Situação atualizada com sucesso');
     expect(response.body.situation.nameSituation).toBe('Ativo');
   });
+
+  it('11. DELETE /situations/:id (delete) com ID inexistente deve retornar status 404 e mensagem de erro', async () => {
+    const response = await request(app).delete('/situations/999999');
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toMatch(/Situação não encontrada/i);
+  });
+
+  it('12. DELETE /situations/:id (delete) com ID existente deve remover com sucesso (status 200)', async () => {
+    const situationRepo = AppDataSource.getRepository(Situation);
+    const situation = await situationRepo.findOneBy({ nameSituation: 'Ativo' });
+    expect(situation).toBeDefined();
+
+    const response = await request(app).delete(`/situations/${situation!.id}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toBe('Situação removida com sucesso');
+
+    // Verificar se realmente foi removido do banco
+    const deletedInDb = await situationRepo.findOneBy({ id: situation!.id });
+    expect(deletedInDb).toBeNull();
+  });
+
+  it('13. DELETE /situations/:id novamente no mesmo ID deve retornar 404', async () => {
+    const response = await request(app).delete('/situations/999999');
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toMatch(/Situação não encontrada/i);
+  });
 });

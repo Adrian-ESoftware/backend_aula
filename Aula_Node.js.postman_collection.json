@@ -114,6 +114,27 @@
             "description": "Rota PUT para atualizar uma situação existente por ID"
           },
           "response": []
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/situations/:id",
+              "host": ["{{host}}"],
+              "path": ["situations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "5",
+                  "description": "ID da situação a ser removida"
+                }
+              ]
+            },
+            "description": "Rota DELETE para remover uma situação existente por ID"
+          },
+          "response": []
         }
       ]
     }
