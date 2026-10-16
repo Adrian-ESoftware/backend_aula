@@ -104,13 +104,23 @@ Produtos possuem nome, slug, descrição, preço e situação relacionada. O slu
 
 Usuários possuem uma situação relacionada por `situation_id`. As entidades TypeORM ficam em `src/entity/` e as migrations em `src/migration/`.
 
+## Seeds
+
+As seeds para inicialização e população padrão do banco de dados ficam organizadas na pasta `src/seeds/`:
+
+- `src/seeds/create-situations-seeds.ts`: classe responsável por verificar se a tabela `situations` já possui registros (via `.count()`). Se estiver vazia, popula os registros padrão (`Ativo`, `Inativo`, `Pendente`).
+- `src/run-seeds.ts`: script centralizador executável que estabelece conexão via `AppDataSource`, instancia e executa as classes de seeds criadas, e finaliza a conexão de forma segura através de blocos `try/catch/finally`.
+
+Para executar as seeds:
+
+```bash
+npm run seed
+# ou após compilação:
+node dist/run-seeds.js
+```
+
 ## Dados de teste
 
-Depois de executar `npm run seed`, use:
-
-```text
-e-mail: admin@example.com
-senha: 12345678
-```
+Para testes na aplicação, após popular as situações e criar usuários, utilize os registros padrão e endpoints disponíveis.
 
 Em ambiente de desenvolvimento, `POST /auth/forgot-password` inclui o token de recuperação na resposta para facilitar os testes locais. Em produção, a resposta não expõe o token.
