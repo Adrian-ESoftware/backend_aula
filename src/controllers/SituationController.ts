@@ -1,68 +1,29 @@
 import { Request, Response, Router } from 'express';
 import { AppDataSource } from '../data-source';
 import { Situation } from '../entity/Situation';
+import { PaginationService } from '../services/pagination.service';
 
 const router = Router();
 
-// 1. Rota de listagem geral (GET) - List com paginação manual
+// 1. Rota de listagem geral (GET) - List com PaginationService
 const listSituations = async (req: Request, res: Response): Promise<void> => {
   try {
     const situationRepository = AppDataSource.getRepository(Situation);
+    const { page = 1, limit = 10 } = req.query;
 
-    // 1. Parâmetro de Página (page)
-    const pageQuery = req.query.page;
-    let page = parseInt(pageQuery as string, 10);
-    if (isNaN(page) || page < 1) {
-      page = 1;
-    }
+    const result = await PaginationService.paginate(
+      situationRepository,
+      Number(page) || 1,
+      Number(limit) || 10,
+      { id: 'DESC' }
+    );
 
-    // 2. Limite de Registros (limit)
-    const limit = 2;
-
-    // 3. Contagem e Validação de Existência (count)
-    const totalSituations = await situationRepository.count();
-
-    if (totalSituations === 0) {
-      res.status(400).json({
-        message: 'Nenhuma situação encontrada',
-      });
-      return;
-    }
-
-    // 4. Cálculo da Última Página (lastPage)
-    const lastPage = Math.ceil(totalSituations / limit);
-
-    // 5. Validação da Página Solicitada
-    if (page > lastPage) {
-      res.status(400).json({
-        message: `Página inválida. O total de páginas é ${lastPage}.`,
-      });
-      return;
-    }
-
-    // 6. Cálculo de Deslocamento (offset / skip)
-    const offset = (page - 1) * limit;
-
-    // 7. Consulta Paginada ao Banco de Dados
-    const situations = await situationRepository.find({
-      take: limit,
-      skip: offset,
-      order: {
-        id: 'DESC',
-      },
-    });
-
-    // 8. Formato da Resposta
-    res.status(200).json({
-      currentPage: page,
-      lastPage,
-      totalSituations,
-      situations,
-    });
+    res.status(200).json(result);
     return;
   } catch (error: any) {
-    res.status(500).json({
-      message: error?.message || 'Erro ao listar situação',
+    res.status(400).json({
+      error: true,
+      message: error?.message || 'Erro ao listar situações.',
     });
     return;
   }
