@@ -4,13 +4,61 @@ import { Situation } from '../entity/Situation';
 
 const router = Router();
 
-// 1. Rota de listagem geral (GET) - List
-const listSituations = async (_req: Request, res: Response): Promise<void> => {
+// 1. Rota de listagem geral (GET) - List com paginação manual
+const listSituations = async (req: Request, res: Response): Promise<void> => {
   try {
     const situationRepository = AppDataSource.getRepository(Situation);
-    const situations = await situationRepository.find();
 
-    res.status(200).json(situations);
+    // 1. Parâmetro de Página (page)
+    const pageQuery = req.query.page;
+    let page = parseInt(pageQuery as string, 10);
+    if (isNaN(page) || page < 1) {
+      page = 1;
+    }
+
+    // 2. Limite de Registros (limit)
+    const limit = 2;
+
+    // 3. Contagem e Validação de Existência (count)
+    const totalSituations = await situationRepository.count();
+
+    if (totalSituations === 0) {
+      res.status(400).json({
+        message: 'Nenhuma situação encontrada',
+      });
+      return;
+    }
+
+    // 4. Cálculo da Última Página (lastPage)
+    const lastPage = Math.ceil(totalSituations / limit);
+
+    // 5. Validação da Página Solicitada
+    if (page > lastPage) {
+      res.status(400).json({
+        message: `Página inválida. O total de páginas é ${lastPage}.`,
+      });
+      return;
+    }
+
+    // 6. Cálculo de Deslocamento (offset / skip)
+    const offset = (page - 1) * limit;
+
+    // 7. Consulta Paginada ao Banco de Dados
+    const situations = await situationRepository.find({
+      take: limit,
+      skip: offset,
+      order: {
+        id: 'DESC',
+      },
+    });
+
+    // 8. Formato da Resposta
+    res.status(200).json({
+      currentPage: page,
+      lastPage,
+      totalSituations,
+      situations,
+    });
     return;
   } catch (error: any) {
     res.status(500).json({
