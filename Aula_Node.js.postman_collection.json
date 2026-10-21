@@ -23,11 +23,21 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{host}}/situations",
+              "raw": "{{host}}/situations?page=1&limit=10",
               "host": ["{{host}}"],
-              "path": ["situations"]
+              "path": ["situations"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
             },
-            "description": "Rota GET para listagem geral de todas as situações cadastradas"
+            "description": "Rota GET para listagem de situações com paginação"
           },
           "response": []
         },
@@ -133,6 +143,357 @@
               ]
             },
             "description": "Rota DELETE para remover uma situação existente por ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Product Categories",
+      "item": [
+        {
+          "name": "list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/product-categories?page=1&limit=10",
+              "host": ["{{host}}"],
+              "path": ["product-categories"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Listagem de categorias com paginação"
+          },
+          "response": []
+        },
+        {
+          "name": "view",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/product-categories/:id",
+              "host": ["{{host}}"],
+              "path": ["product-categories", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Informática\"\n}"
+            },
+            "url": {
+              "raw": "{{host}}/product-categories",
+              "host": ["{{host}}"],
+              "path": ["product-categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "edit",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Informática & Hardware\"\n}"
+            },
+            "url": {
+              "raw": "{{host}}/product-categories/:id",
+              "host": ["{{host}}"],
+              "path": ["product-categories", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/product-categories/:id",
+              "host": ["{{host}}"],
+              "path": ["product-categories", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Product Situations",
+      "item": [
+        {
+          "name": "list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/product-situations?page=1&limit=10",
+              "host": ["{{host}}"],
+              "path": ["product-situations"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Listagem de situações de produtos com paginação"
+          },
+          "response": []
+        },
+        {
+          "name": "view",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/product-situations/:id",
+              "host": ["{{host}}"],
+              "path": ["product-situations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Disponível\"\n}"
+            },
+            "url": {
+              "raw": "{{host}}/product-situations",
+              "host": ["{{host}}"],
+              "path": ["product-situations"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "edit",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Disponível em Estoque\"\n}"
+            },
+            "url": {
+              "raw": "{{host}}/product-situations/:id",
+              "host": ["{{host}}"],
+              "path": ["product-situations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/product-situations/:id",
+              "host": ["{{host}}"],
+              "path": ["product-situations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/products?page=1&limit=10",
+              "host": ["{{host}}"],
+              "path": ["products"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Listagem de produtos paginados com categorias e situações relacionadas"
+          },
+          "response": []
+        },
+        {
+          "name": "view",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/products/:id",
+              "host": ["{{host}}"],
+              "path": ["products", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Teclado Mecânico\",\n  \"productSituationId\": 1,\n  \"productCategoryId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{host}}/products",
+              "host": ["{{host}}"],
+              "path": ["products"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "edit",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Teclado Mecânico RGB\",\n  \"productSituationId\": 1,\n  \"productCategoryId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{host}}/products/:id",
+              "host": ["{{host}}"],
+              "path": ["products", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/products/:id",
+              "host": ["{{host}}"],
+              "path": ["products", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
           },
           "response": []
         }

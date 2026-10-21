@@ -2,6 +2,8 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { config } from './config';
 import { Product } from './entity/Product';
+import { ProductCategory } from './entity/ProductCategory';
+import { ProductSituation } from './entity/ProductSituation';
 import { Situation } from './entity/Situation';
 import { User } from './entity/User';
 
@@ -12,7 +14,7 @@ export const AppDataSource = new DataSource({
   username: config.database.username,
   password: config.database.password,
   database: config.database.database,
-  entities: [User, Situation, Product],
+  entities: [User, Situation, Product, ProductCategory, ProductSituation],
   migrations: [__dirname + '/migration/*.js'],
   synchronize: false,
   logging: config.nodeEnv === 'development' ? ['error'] : false,

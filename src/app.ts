@@ -4,7 +4,9 @@ import cors from 'cors';
 import { AppError } from './errors';
 import { AuthController } from './controllers/AuthController';
 import { SituationController } from './controllers/SituationController';
-import catalogRoutes from './routes/catalog.routes';
+import { ProductCategoryController } from './controllers/ProductCategoryController';
+import { ProductSituationController } from './controllers/ProductSituationController';
+import { ProductController } from './controllers/ProductController';
 
 export const app = express();
 
@@ -17,7 +19,9 @@ app.get('/health', (_req, res) => {
 
 app.use('/auth', AuthController);
 app.use('/situations', SituationController);
-app.use(catalogRoutes);
+app.use('/product-categories', ProductCategoryController);
+app.use('/product-situations', ProductSituationController);
+app.use('/products', ProductController);
 
 app.use((_req, _res, next) => next(new AppError('Rota não encontrada.', 404)));
 

@@ -10,6 +10,34 @@ API REST educacional construída com Node.js, TypeScript, Express, TypeORM e MyS
 
 O projeto atual foi validado com Node.js `v26.7.0`. O servidor MySQL precisa estar instalado e em execução separadamente.
 
+## Diagrama do Banco de Dados
+
+O banco de dados segue a estrutura relacional definida no diagrama:
+
+```text
++---------------------+           +---------------------+
+|     situations      |           |        users        |
++---------------------+           +---------------------+
+| id (PK)             |<-----+    | id (PK)             |
+| nameSituation       |      +----| situationId (FK)    |
+| createdAt           |           | name                |
+| updatedAt           |           | email               |
++---------------------+           | createdAt           |
+                                  | updatedAt           |
+                                  +---------------------+
+
++---------------------+           +---------------------+           +---------------------+
+| product_categories  |           |      products       |           | product_situations  |
++---------------------+           +---------------------+           +---------------------+
+| id (PK)             |<-----+    | id (PK)             |    +----->| id (PK)             |
+| name                |      +----| productCategoryId   |    |      | name                |
+| createdAt           |           | productSituationId  |----+      | createdAt           |
+| updatedAt           |           | name                |           | updatedAt           |
++---------------------+           | createdAt           |           +---------------------+
+                                  | updatedAt           |
+                                  +---------------------+
+```
+
 ## Instalação
 
 1. Crie o banco de dados:
@@ -48,12 +76,6 @@ npm test             # testes automatizados
 
 As migrations também podem ser revertidas com `npm run migration:revert`.
 
-As migrations de criação ficam em `src/migration/`, nas classes `CreateSituationsTable` e `CreateUsersTable`. Para gerar uma nova migration:
-
-```bash
-npx typeorm migration:create src/migration/NomeDaMigration
-```
-
 ## Variáveis de ambiente
 
 Veja `.env.example` para a lista completa. As principais são:
@@ -64,63 +86,56 @@ Veja `.env.example` para a lista completa. As principais são:
 - `JWT_EXPIRES_IN`: duração do JWT, padrão `1d`.
 - `RECOVERY_TOKEN_EXPIRES_MINUTES`: validade do token de recuperação, padrão `30`.
 
-## API
+## API e Endpoints
 
-O health check não consulta tabelas, mas o servidor precisa conseguir inicializar a conexão com o MySQL:
+Todos os endpoints de listagem utilizam paginação via query parameters (`?page=1&limit=10`) com o `PaginationService`.
 
-```http
-GET /health
-```
+### 1. Situações de Usuários (`/situations`)
+- `GET /situations?page=1&limit=10` (lista paginada)
+- `GET /situations/:id` (visualização)
+- `POST /situations` (cadastro)
+- `PUT /situations/:id` e `PATCH /situations/:id` (edição)
+- `DELETE /situations/:id` (remoção)
 
-### Autenticação
+### 2. Categorias de Produtos (`/product-categories`)
+- `GET /product-categories?page=1&limit=10` (lista paginada)
+- `GET /product-categories/:id` (visualização)
+- `POST /product-categories` (cadastro)
+- `PUT /product-categories/:id` e `PATCH /product-categories/:id` (edição)
+- `DELETE /product-categories/:id` (remoção)
 
-```http
-POST /auth/register
-Content-Type: application/json
+### 3. Situações de Produtos (`/product-situations`)
+- `GET /product-situations?page=1&limit=10` (lista paginada)
+- `GET /product-situations/:id` (visualização)
+- `POST /product-situations` (cadastro)
+- `PUT /product-situations/:id` e `PATCH /product-situations/:id` (edição)
+- `DELETE /product-situations/:id` (remoção)
 
-{
-  "name": "Maria",
-  "email": "maria@example.com",
-  "password": "senha-segura"
-}
-```
+### 4. Produtos (`/products`)
+- `GET /products?page=1&limit=10` (lista paginada com categoria e situação)
+- `GET /products/:id` (visualização detalhada)
+- `POST /products` (cadastro vinculando `productCategoryId` e `productSituationId`)
+- `PUT /products/:id` e `PATCH /products/:id` (edição)
+- `DELETE /products/:id` (remoção)
 
-Também estão disponíveis `POST /auth/login`, `GET /auth/me`, `POST /auth/forgot-password` e `POST /auth/reset-password`.
-
-Envie o JWT retornado no login para endpoints protegidos:
-
-```http
-Authorization: Bearer <token>
-```
-
-### Situações e produtos
-
-- `GET /situations` e `GET /situations/:id`
-- `POST`, `PATCH` e `DELETE /situations/:id` — autenticados
-- `GET /products` e `GET /products/:id`
-- `POST`, `PATCH` e `DELETE /products/:id` — autenticados
-
-Produtos possuem nome, slug, descrição, preço e situação relacionada. O slug é gerado automaticamente a partir do nome.
-
-Usuários possuem uma situação relacionada por `situation_id`. As entidades TypeORM ficam em `src/entity/` e as migrations em `src/migration/`.
+### 5. Autenticação (`/auth`)
+- `POST /auth/register`
+- `POST /auth/login`
+- `GET /auth/me`
+- `POST /auth/forgot-password`
+- `POST /auth/reset-password`
 
 ## Seeds
 
 As seeds para inicialização e população padrão do banco de dados ficam organizadas na pasta `src/seeds/`:
 
-- `src/seeds/create-situations-seeds.ts`: classe responsável por verificar se a tabela `situations` já possui registros (via `.count()`). Se estiver vazia, popula os registros padrão (`Ativo`, `Inativo`, `Pendente`).
-- `src/run-seeds.ts`: script centralizador executável que estabelece conexão via `AppDataSource`, instancia e executa as classes de seeds criadas, e finaliza a conexão de forma segura através de blocos `try/catch/finally`.
+- `src/seeds/create-situations-seeds.ts`: popula `Ativo`, `Inativo`, `Pendente` na tabela `situations`.
+- `src/seeds/create-product-situations-seeds.ts`: popula `Disponível`, `Indisponível`, `Esgotado`, `Descontinuado` na tabela `product_situations`.
+- `src/seeds/create-product-categories-seeds.ts`: popula `Eletrônicos`, `Informática`, `Acessórios`, `Escritório` na tabela `product_categories`.
+- `src/run-seeds.ts`: script centralizador executável que executa todas as seeds em sequência e finaliza a conexão de forma segura.
 
 Para executar as seeds:
 
 ```bash
 npm run seed
-# ou após compilação:
-node dist/run-seeds.js
 ```
-
-## Dados de teste
-
-Para testes na aplicação, após popular as situações e criar usuários, utilize os registros padrão e endpoints disponíveis.
-
-Em ambiente de desenvolvimento, `POST /auth/forgot-password` inclui o token de recuperação na resposta para facilitar os testes locais. Em produção, a resposta não expõe o token.

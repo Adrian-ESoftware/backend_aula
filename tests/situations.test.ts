@@ -26,11 +26,12 @@ describe('SituationController - Testes Completos', () => {
     }
   });
 
-  it('1. GET /situations (list) deve retornar status 200 com array de situações', async () => {
+  it('1. GET /situations (list) deve retornar status 200 com payload paginado e lista de situações', async () => {
     const response = await request(app).get('/situations');
 
     expect(response.status).toBe(200);
-    expect(Array.isArray(response.body)).toBe(true);
+    const list = response.body.data ?? response.body;
+    expect(Array.isArray(list)).toBe(true);
   });
 
   it('2. POST /situations (1º disparo) deve cadastrar "Ativo" com sucesso (status 201)', async () => {
@@ -61,8 +62,9 @@ describe('SituationController - Testes Completos', () => {
     const response = await request(app).get('/situations');
 
     expect(response.status).toBe(200);
-    expect(Array.isArray(response.body)).toBe(true);
-    const ativo = response.body.find((item: any) => item.nameSituation === 'Ativo');
+    const list = response.body.data ?? response.body;
+    expect(Array.isArray(list)).toBe(true);
+    const ativo = list.find((item: any) => item.nameSituation === 'Ativo');
     expect(ativo).toBeDefined();
     expect(ativo.id).toBeDefined();
   });

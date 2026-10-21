@@ -96,7 +96,7 @@ router.delete(
   requireAuth,
   asyncHandler(async (req, res) => {
     const situation = await findSituation(parseId(req.params.id));
-    const linkedProducts = await products().countBy({ situationId: situation.id });
+    const linkedProducts = await products().countBy({ productSituationId: situation.id });
     if (linkedProducts > 0) throw new AppError('Não é possível excluir uma situação com produtos vinculados.', 409);
     await situations().remove(situation);
     res.status(204).send();
@@ -106,7 +106,7 @@ router.delete(
 router.get(
   '/products',
   asyncHandler(async (_req, res) => {
-    res.json(await products().find({ relations: { situation: true }, order: { id: 'ASC' } }));
+    res.json(await products().find({ relations: { productSituation: true, productCategory: true }, order: { id: 'ASC' } }));
   }),
 );
 
@@ -115,7 +115,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const product = await products().findOne({
       where: { id: parseId(req.params.id) },
-      relations: { situation: true },
+      relations: { productSituation: true, productCategory: true },
     });
     if (!product) throw new AppError('Produto não encontrado.', 404);
     res.json(product);

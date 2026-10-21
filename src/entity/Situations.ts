@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Product } from './Product';
 import { Users } from './Users';
 
 @Entity('situations')
@@ -14,7 +13,7 @@ export class Situations {
   @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
-  @Column({ type: 'varchar', length: 80, unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true })
   nameSituation!: string;
 
   @Column({ type: 'text', nullable: true })
@@ -36,9 +35,7 @@ export class Situations {
 
   @OneToMany(() => Users, (user) => user.situation)
   users!: Users[];
-
-  @OneToMany(() => Product, (product) => product.situation)
-  products!: Product[];
 }
 
 export { Situations as Situation };
+export default Situations;
