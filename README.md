@@ -1,4 +1,4 @@
-# API Baianá Aula Quinta
+# API Baiao Aula Quinta
 
 API REST educacional construída com Node.js, TypeScript, Express, TypeORM e MySQL.
 
