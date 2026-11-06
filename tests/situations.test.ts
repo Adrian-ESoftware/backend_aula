@@ -47,15 +47,24 @@ describe('SituationController - Testes Completos', () => {
     expect(response.body.situation.id).toBeDefined();
   });
 
-  it('3. POST /situations (2º disparo duplicado) deve ser bloqueado por restrição unique (status 500)', async () => {
+  it('3. POST /situations (2º disparo duplicado) deve ser bloqueado com erro de validação (status 400)', async () => {
     const response = await request(app)
       .post('/situations')
       .send({ nameSituation: 'Ativo' });
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('message');
-    // Deve conter indicação de erro no banco (duplicate entry)
-    expect(response.body.message).toMatch(/Duplicate entry|ER_DUP_ENTRY/i);
+    expect(response.body.message).toBe('Já existe uma situação cadastrada com esse nome.');
+  });
+
+  it('3b. POST /situations com nome existente em caixa diferente (ex: "ativo") deve retornar 400', async () => {
+    const response = await request(app)
+      .post('/situations')
+      .send({ nameSituation: 'ativo' });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toBe('Já existe uma situação cadastrada com esse nome.');
   });
 
   it('4. GET /situations (list) deve conter a situação "Ativo" cadastrada', async () => {
@@ -122,7 +131,7 @@ describe('SituationController - Testes Completos', () => {
     expect(response.body.message).toMatch(/Situação não encontrada/i);
   });
 
-  it('9. PUT /situations/:id (edit) com nome duplicado deve ser bloqueado por restrição unique (status 500)', async () => {
+  it('9. PUT /situations/:id (edit) com nome duplicado deve ser bloqueado com erro de validação (status 400)', async () => {
     // Cadastrar uma nova situação "Pendente"
     const createRes = await request(app)
       .post('/situations')
@@ -135,9 +144,23 @@ describe('SituationController - Testes Completos', () => {
       .put(`/situations/${pendenteId}`)
       .send({ nameSituation: 'Inativo' });
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('message');
-    expect(response.body.message).toMatch(/Duplicate entry|ER_DUP_ENTRY/i);
+    expect(response.body.message).toBe('Já existe uma situação cadastrada com esse nome.');
+  });
+
+  it('9b. PUT /situations/:id (edit) mantendo o mesmo nome deve permitir atualização (status 200)', async () => {
+    const situationRepo = AppDataSource.getRepository(Situation);
+    const pendente = await situationRepo.findOneBy({ nameSituation: 'Pendente' });
+    expect(pendente).toBeDefined();
+
+    const response = await request(app)
+      .put(`/situations/${pendente!.id}`)
+      .send({ nameSituation: 'Pendente' });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toBe('Situação atualizada com sucesso');
   });
 
   it('10. PATCH /situations/:id (edit) também deve atualizar com sucesso (status 200)', async () => {

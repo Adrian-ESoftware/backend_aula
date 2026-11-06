@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express';
+import { Not } from 'typeorm';
 import { AppDataSource } from '../data-source';
 import { Situation } from '../entity/Situation';
 import { PaginationService } from '../services/pagination.service';
@@ -73,8 +74,23 @@ router.get('/situations/:id', viewSituation);
 // 3. Rota POST (Create) - Cadastro
 const createSituation = async (req: Request, res: Response): Promise<void> => {
   try {
+    const data = req.body;
     const situationRepository = AppDataSource.getRepository(Situation);
-    const newSituation = situationRepository.create(req.body);
+
+    if (data?.nameSituation) {
+      const existingSituation = await situationRepository.findOne({
+        where: { nameSituation: data.nameSituation },
+      });
+
+      if (existingSituation) {
+        res.status(400).json({
+          message: 'Já existe uma situação cadastrada com esse nome.',
+        });
+        return;
+      }
+    }
+
+    const newSituation = situationRepository.create(data);
     await situationRepository.save(newSituation);
 
     res.status(201).json({
@@ -118,7 +134,25 @@ const editSituation = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    situationRepository.merge(situation, req.body);
+    const data = req.body;
+
+    if (data?.nameSituation) {
+      const existingSituation = await situationRepository.findOne({
+        where: {
+          nameSituation: data.nameSituation,
+          id: Not(parsedId), // Ignora o registro atual na busca
+        },
+      });
+
+      if (existingSituation) {
+        res.status(400).json({
+          message: 'Já existe uma situação cadastrada com esse nome.',
+        });
+        return;
+      }
+    }
+
+    situationRepository.merge(situation, data);
     situation.id = parsedId;
     const updatedSituation = await situationRepository.save(situation);
 
