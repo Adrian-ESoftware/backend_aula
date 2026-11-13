@@ -7,6 +7,7 @@ import { SituationController } from './controllers/SituationController';
 import { ProductCategoryController } from './controllers/ProductCategoryController';
 import { ProductSituationController } from './controllers/ProductSituationController';
 import { ProductController } from './controllers/ProductController';
+import { TestConnectionController } from './controllers/TestConnectionController';
 
 export const app = express();
 
@@ -16,6 +17,8 @@ app.use(express.json());
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
+
+app.use('/test-connection', TestConnectionController);
 
 app.use('/auth', AuthController);
 app.use('/situations', SituationController);
